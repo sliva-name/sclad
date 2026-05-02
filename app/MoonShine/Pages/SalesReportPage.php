@@ -13,6 +13,8 @@ use MoonShine\Contracts\UI\ComponentContract;
 use MoonShine\Laravel\Pages\Page;
 use MoonShine\Support\Attributes\Icon;
 use MoonShine\Support\Enums\Color;
+use MoonShine\Support\Enums\FormMethod;
+use MoonShine\UI\Components\FormBuilder;
 use MoonShine\UI\Components\Layout\Box;
 use MoonShine\UI\Components\Layout\Column;
 use MoonShine\UI\Components\Layout\Flex;
@@ -20,6 +22,7 @@ use MoonShine\UI\Components\Layout\Grid;
 use MoonShine\UI\Components\Link;
 use MoonShine\UI\Components\Metrics\Wrapped\ValueMetric;
 use MoonShine\UI\Components\Table\TableBuilder;
+use MoonShine\UI\Fields\Date;
 use MoonShine\UI\Fields\Number;
 use MoonShine\UI\Fields\Text;
 
@@ -66,6 +69,12 @@ class SalesReportPage extends Page
         }
 
         $from = $from->copy()->startOfDay();
+        $to = $to->copy()->startOfDay();
+
+        if ($from->gt($to)) {
+            [$from, $to] = [$to->copy()->startOfDay(), $from->copy()->startOfDay()];
+        }
+
         $to = $to->copy()->endOfDay();
 
         $salesQuery = Sale::query()
@@ -145,6 +154,18 @@ class SalesReportPage extends Page
 
         return [
             Box::make('Период', [
+                FormBuilder::make($this->getUrl(), FormMethod::GET)
+                    ->fields([
+                        Flex::make([
+                            Date::make('С даты', 'from'),
+                            Date::make('По дату', 'to'),
+                        ])->justifyAlign('start')->wrap()->itemsAlign('end'),
+                    ])
+                    ->fill([
+                        'from' => $from->toDateString(),
+                        'to' => $to->toDateString(),
+                    ])
+                    ->submit('Показать', ['class' => 'btn-primary']),
                 Flex::make([
                     Link::make(
                         fn (): string => $this->periodUrl('today'),
@@ -158,7 +179,7 @@ class SalesReportPage extends Page
                         fn (): string => $this->periodUrl('month'),
                         'Месяц'
                     )->button()->filled(),
-                ])->justifyAlign('start')->wrap(),
+                ])->justifyAlign('start')->wrap()->class('mt-4'),
             ]),
 
             Grid::make([
@@ -267,14 +288,14 @@ class SalesReportPage extends Page
             default => Carbon::now()->startOfMonth(),
         };
 
-        return $this->getUrl() . '?' . http_build_query([
+        return $this->getUrl().'?'.http_build_query([
             'from' => $start->toDateString(),
             'to' => Carbon::now()->toDateString(),
         ]);
     }
 
     /**
-     * @param Collection<int, array<string, mixed>> $rows
+     * @param  Collection<int, array<string, mixed>>  $rows
      * @return Collection<int, array<string, mixed>>
      */
     private function fallbackTopRows(Collection $rows): Collection
@@ -291,7 +312,7 @@ class SalesReportPage extends Page
     }
 
     /**
-     * @param Collection<int, array<string, mixed>> $rows
+     * @param  Collection<int, array<string, mixed>>  $rows
      * @return Collection<int, array<string, mixed>>
      */
     private function fallbackSalesRows(Collection $rows): Collection
@@ -310,7 +331,7 @@ class SalesReportPage extends Page
     }
 
     /**
-     * @param Collection<int, array<string, mixed>> $rows
+     * @param  Collection<int, array<string, mixed>>  $rows
      * @return Collection<int, array<string, mixed>>
      */
     private function fallbackOutOfStockRows(Collection $rows): Collection
@@ -328,7 +349,7 @@ class SalesReportPage extends Page
     }
 
     /**
-     * @param Collection<int, array<string, mixed>> $rows
+     * @param  Collection<int, array<string, mixed>>  $rows
      * @return Collection<int, array<string, mixed>>
      */
     private function fallbackLowStockRows(Collection $rows): Collection

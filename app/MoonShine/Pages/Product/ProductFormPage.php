@@ -33,7 +33,12 @@ class ProductFormPage extends FormPage
                 ID::make(),
                 Text::make('Название', 'name')->required(),
                 Text::make('SKU', 'sku'),
-                Number::make('Остаток', 'current_stock')->required(),
+                Number::make('Остаток на складе', 'current_stock')
+                    ->readonly()
+                    ->hint(
+                        'Считается из приходов, продаж, возвратов и корректировок. '
+                        .'Изменить количество: «Движения склада» или «Продажи».'
+                    ),
                 Number::make('Закупочная цена', 'purchase_price'),
                 Number::make('Цена продажи', 'sale_price'),
                 Image::make('Фото', 'photo_path')
@@ -55,7 +60,7 @@ class ProductFormPage extends FormPage
                 'max:255',
                 Rule::unique('products', 'sku')->ignore($item->getOriginal()),
             ],
-            'current_stock' => ['required', 'integer', 'min:0'],
+            'current_stock' => ['sometimes', 'integer', 'min:0'],
             'purchase_price' => ['nullable', 'numeric', 'min:0'],
             'sale_price' => ['nullable', 'numeric', 'min:0'],
             'attributes' => ['nullable', 'array'],

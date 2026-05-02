@@ -26,8 +26,8 @@ class MoonShineServiceProvider extends ServiceProvider
                 MoonShineUserResource::class,
                 MoonShineUserRoleResource::class,
                 ProductResource::class,
-                StockMovementResource::class,
                 SaleResource::class,
+                StockMovementResource::class,
             ])
             ->pages([
                 ...$core->getConfig()->getPages(),

@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace App\MoonShine\Resources;
 
+use App\Models\Sale;
 use App\MoonShine\Pages\Sale\SaleFormPage;
 use App\MoonShine\Pages\Sale\SaleIndexPage;
-use App\Models\Sale;
 use App\Services\InventoryService;
+use Illuminate\Support\Facades\DB;
 use MoonShine\Contracts\Core\DependencyInjection\FieldsContract;
 use MoonShine\Contracts\Core\PageContract;
 use MoonShine\Contracts\Core\TypeCasts\DataWrapperContract;
-use Illuminate\Support\Facades\DB;
 use MoonShine\Laravel\Resources\ModelResource;
 use MoonShine\MenuManager\Attributes\Group;
+use MoonShine\Support\Attributes\Icon;
 use MoonShine\Support\Enums\Action;
 use MoonShine\Support\Enums\PageType;
-use MoonShine\Support\Attributes\Icon;
 use MoonShine\Support\ListOf;
 
 /**
@@ -27,7 +27,9 @@ use MoonShine\Support\ListOf;
 class SaleResource extends ModelResource
 {
     protected string $model = Sale::class;
-    protected string $title = 'Продажи';
+
+    protected string $title = 'Продажи (клиенту)';
+
     protected ?PageType $redirectAfterSave = PageType::INDEX;
 
     public array $with = ['product'];

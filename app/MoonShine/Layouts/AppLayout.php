@@ -9,11 +9,9 @@ use App\MoonShine\Resources\ProductResource;
 use App\MoonShine\Resources\SaleResource;
 use App\MoonShine\Resources\StockMovementResource;
 use MoonShine\Contracts\MenuManager\MenuElementContract;
-use Rwsite\MoonShinePolarisTheme\Layouts\PolarisThemeLayout;
-use MoonShine\Laravel\Resources\MoonShineUserResource;
-use MoonShine\Laravel\Resources\MoonShineUserRoleResource;
 use MoonShine\MenuManager\MenuGroup;
 use MoonShine\MenuManager\MenuItem;
+use Rwsite\MoonShinePolarisTheme\Layouts\PolarisThemeLayout;
 
 class AppLayout extends PolarisThemeLayout
 {
@@ -23,10 +21,12 @@ class AppLayout extends PolarisThemeLayout
     protected function menu(): array
     {
         return [
+            /*
             MenuGroup::make(static fn () => __('moonshine::ui.resource.system'), [
                 MenuItem::make(MoonShineUserResource::class),
                 MenuItem::make(MoonShineUserRoleResource::class),
             ]),
+            */
 
             MenuGroup::make('Склад', [
                 MenuItem::make(ProductResource::class),

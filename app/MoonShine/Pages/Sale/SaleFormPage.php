@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace App\MoonShine\Pages\Sale;
 
-use Illuminate\Support\Arr;
-use Illuminate\Database\Eloquent\Builder;
-use App\Models\Sale;
 use App\Models\Product;
+use App\Models\Sale;
 use App\MoonShine\Resources\ProductResource;
 use App\MoonShine\Resources\SaleResource;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Arr;
 use MoonShine\Contracts\Core\DependencyInjection\FieldsContract;
 use MoonShine\Contracts\Core\TypeCasts\DataWrapperContract;
 use MoonShine\Contracts\UI\ComponentContract;
 use MoonShine\Contracts\UI\FieldContract;
 use MoonShine\Laravel\Fields\Relationships\BelongsTo;
 use MoonShine\Laravel\Pages\Crud\FormPage;
+use MoonShine\UI\Components\Heading;
 use MoonShine\UI\Components\Layout\Box;
 use MoonShine\UI\Fields\Date;
 use MoonShine\UI\Fields\ID;
@@ -34,6 +35,10 @@ class SaleFormPage extends FormPage
     {
         return [
             Box::make([
+                Heading::make(
+                    'Оформление отгрузки клиенту. Остаток спишется автоматически; отдельно '
+                    .'заводить движение «Продажа» не нужно — оно создаётся только из этого раздела.'
+                )->h(4, false),
                 ID::make(),
                 BelongsTo::make('Товар', 'product', resource: ProductResource::class)
                     ->required()
@@ -114,7 +119,7 @@ class SaleFormPage extends FormPage
     protected function rules(DataWrapperContract $item): array
     {
         return [
-            'product_id' => ['required', 'exists:' . Product::class . ',id'],
+            'product_id' => ['required', 'exists:'.Product::class.',id'],
             'quantity' => ['required', 'integer', 'min:1'],
             'unit_price' => ['required', 'numeric', 'min:0'],
             'notes' => ['nullable', 'string'],
@@ -160,9 +165,9 @@ class SaleFormPage extends FormPage
     {
         $lines = [
             "Название: {$product->name}",
-            'SKU: ' . ($product->sku ?: '-'),
-            'Остаток: ' . (int) ($product->current_stock ?? 0),
-            'Цена продажи: ' . (float) ($product->sale_price ?? 0),
+            'SKU: '.($product->sku ?: '-'),
+            'Остаток: '.(int) ($product->current_stock ?? 0),
+            'Цена продажи: '.(float) ($product->sale_price ?? 0),
         ];
 
         $attributes = $product->getAttribute('attributes');

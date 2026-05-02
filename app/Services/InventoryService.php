@@ -30,6 +30,7 @@ class InventoryService
 
         $delta = match ($movementType) {
             StockMovementType::INBOUND => $quantity,
+            StockMovementType::RETURNED => $quantity,
             StockMovementType::SALE => -1 * $quantity,
             StockMovementType::ADJUSTMENT => $quantity,
             default => throw ValidationException::withMessages([
